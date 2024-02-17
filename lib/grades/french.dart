@@ -48,20 +48,23 @@ class FreGrade extends Grade{
   
   @override
   Map getScalonAtY(int y) {
-
-    Map _scalon = _scalons[0];
+    Map scalon = _scalons.first;
+    
     for (Map e in _scalons) {
-      if(e["y"]>=y){
-        _scalon = e;
+      if (e["y"] >= y) {
+        scalon = e;
         break;
       }
     }
-    return _scalon;
+
+    if (y >= _scalons.last["y"]) {
+      scalon = _scalons.last;
+    }
+
+    return scalon;
   }
   
   @override
   List<Map> get scalons => _scalons;
-
-  
 
 }

@@ -1,4 +1,6 @@
 
+import 'package:degrades/grades/australian.dart';
+import 'package:degrades/grades/brazil.dart';
 import 'package:degrades/grades/french.dart';
 import 'package:degrades/grades/grade.dart';
 import 'package:degrades/grades/yosemite.dart';
@@ -21,6 +23,8 @@ class _HomeState extends State<Home> {
   List<Grade> grades = [
     YosGrade(),
     FreGrade(),
+    BraGrade(),
+    AusGrade(),
   ];
 
   Map scalon = {
@@ -74,6 +78,7 @@ class _HomeState extends State<Home> {
       selectedScale = pos;
       scalon = grades[selectedScale].getScalonAtY(_controller.offset.floor()+offsetFirst);
     });
+    centerScroll();
   }
 
 

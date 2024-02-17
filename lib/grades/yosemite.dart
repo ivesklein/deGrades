@@ -15,6 +15,7 @@ class YosGrade extends Grade{
     "assets/yosB.svg", semanticsLabel: 'yosemite body'
   );
 
+  @override
   final List<Map> _scalons = [
     //{"h": 251, "y": 0, "label": "-"},
     {"h": 21, "y": 250, "label": "5.7"},
