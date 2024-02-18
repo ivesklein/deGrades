@@ -1,4 +1,6 @@
 
+import 'dart:ffi';
+
 import 'package:degrades/grades/australian.dart';
 import 'package:degrades/grades/brazil.dart';
 import 'package:degrades/grades/french.dart';
@@ -7,7 +9,7 @@ import 'package:degrades/grades/norway.dart';
 import 'package:degrades/grades/southafrica.dart';
 import 'package:degrades/grades/yosemite.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -45,6 +47,8 @@ class _HomeState extends State<Home> {
 
   int selectedScale = 0;
 
+  late SharedPreferences prefs;
+
   @override
   void initState() {
 
@@ -58,8 +62,26 @@ class _HomeState extends State<Home> {
     scalon = grades[selectedScale].scalons.first;
     super.initState();
 
-    Future.delayed(Durations.short1, () {
-      centerScroll();
+    Future.delayed(Duration.zero, () async {
+      prefs = await SharedPreferences.getInstance();
+      print(prefs.getStringList('grades'));
+      final List<int> items = (prefs.getStringList('grades')??[]).map((e) => int.parse(e)).toList();
+
+      if(items.isEmpty){
+        List<String> saveItems = ["0","1","2","3"];
+        await prefs.setStringList('grades', saveItems);
+      }else{
+        List<Grade> prelist = items.map((e) => allGrades[e]).toList();
+        grades = prelist;
+        scalon = grades[selectedScale].scalons.first;
+      }
+
+      scalon = grades[selectedScale].scalons.first;
+
+      Future.delayed(Durations.short1, () {
+        centerScroll();
+      },);
+
     },);
 
     _controller.addListener(() {
@@ -99,7 +121,7 @@ class _HomeState extends State<Home> {
     centerScroll();
   }
 
-  void toggleGrade(bool show, Grade grade){
+  void toggleGrade(bool show, Grade grade) async{
     if(show){
       if(grades.length<4){
         grades.add(grade);
@@ -107,8 +129,25 @@ class _HomeState extends State<Home> {
     }else{
       if(grades.length>1){
         grades.removeWhere((e) => e==grade);
+        if(grades.length<=selectedScale){
+          selectedScale--;
+        }
+        
+        scalon = grades[selectedScale].getScalonAtY(_controller.offset.floor()+offsetFirst);
+        centerScroll();
+
       }
     }
+
+    List<String> saveItems = [];
+    //check all list and save index
+    allGrades.forEach((element) {
+      if(grades.contains(element)){
+        saveItems.add(allGrades.indexOf(element).toString());
+      }
+    });
+    await prefs.setStringList('grades', saveItems);
+
     setState(() {});
 
   }
@@ -167,8 +206,15 @@ class _HomeState extends State<Home> {
                     color: Theme.of(context).colorScheme.primary,
                     width: 3
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                  gradient: RadialGradient(
+                    colors: [
+                      grades[selectedScale].color,
+                      Colors.black,
+                    ],
+                    focalRadius: 50,
+                    radius: 1
+                  )
                 ),
               ),
             ),
