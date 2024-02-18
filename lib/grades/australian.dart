@@ -65,4 +65,11 @@ class AusGrade extends Grade{
   @override
   List<Map> get scalons => _scalons;
 
+  @override
+  String name = "Australian";
+
+  @override
+  Color color = Color.fromRGBO(20, 86, 255, 1);
+  
+
 }

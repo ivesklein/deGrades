@@ -68,6 +68,10 @@ class YosGrade extends Grade{
   @override
   List<Map> get scalons => _scalons;
 
-  
+  @override
+  String name = "Yosemite";
+
+  @override
+  Color color = Color.fromRGBO(0, 129, 170, 1);
 
 }

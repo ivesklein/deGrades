@@ -9,5 +9,8 @@ abstract class Grade{
 
   Map getScalonAtY(int y);
 
+  String get name;
+
+  Color get color;
 
 }

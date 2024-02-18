@@ -60,4 +60,10 @@ class BraGrade extends Grade{
   @override
   List<Map> get scalons => _scalons;
 
+  @override
+  String name = "Brazil";
+
+  @override
+  Color color = Color.fromRGBO(89, 181, 74, 1);
+
 }

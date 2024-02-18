@@ -64,6 +64,10 @@ class SAFGrade extends Grade{
   @override
   List<Map> get scalons => _scalons;
 
-  
+  @override
+  String name = "South Africa";
+
+  @override
+  Color color = Color.fromRGBO(0, 122, 77, 1);
 
 }

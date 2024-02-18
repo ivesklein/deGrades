@@ -45,7 +45,7 @@ class FreGrade extends Grade{
       {"h": 25, "y": 820, "label": "9b+"},
     //{"h": 300, "y": 845, "label": "+"},
   ];
-  
+
   @override
   Map getScalonAtY(int y) {
     Map scalon = _scalons.first;
@@ -66,5 +66,11 @@ class FreGrade extends Grade{
   
   @override
   List<Map> get scalons => _scalons;
+
+  @override
+  String name = "French";
+
+  @override
+  Color color = Color.fromRGBO(128, 26, 26, 1);
 
 }

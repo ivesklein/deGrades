@@ -3,6 +3,8 @@ import 'package:degrades/grades/australian.dart';
 import 'package:degrades/grades/brazil.dart';
 import 'package:degrades/grades/french.dart';
 import 'package:degrades/grades/grade.dart';
+import 'package:degrades/grades/norway.dart';
+import 'package:degrades/grades/southafrica.dart';
 import 'package:degrades/grades/yosemite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,6 +22,15 @@ class _HomeState extends State<Home> {
 
   final offsetFirst = 40;
 
+  List<Grade> allGrades = [
+    YosGrade(),
+    FreGrade(),
+    BraGrade(),
+    AusGrade(),
+    NorGrade(),
+    SAFGrade(),
+  ];
+
   List<Grade> grades = [
     YosGrade(),
     FreGrade(),
@@ -36,6 +47,13 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+
+    grades = [
+      allGrades[0],
+      allGrades[1],
+      allGrades[2],
+      allGrades[3],
+    ];
 
     scalon = grades[selectedScale].scalons.first;
     super.initState();
@@ -81,19 +99,59 @@ class _HomeState extends State<Home> {
     centerScroll();
   }
 
+  void toggleGrade(bool show, Grade grade){
+    if(show){
+      if(grades.length<4){
+        grades.add(grade);
+      }
+    }else{
+      if(grades.length>1){
+        grades.removeWhere((e) => e==grade);
+      }
+    }
+    setState(() {});
+
+  }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar: AppBar(actions: [
+
+      MenuAnchor(
+        builder: (BuildContext context, MenuController controller, Widget? child) {
+            return IconButton(
+              onPressed: () {
+                if (controller.isOpen) {
+                  controller.close();
+                } else {
+                  controller.open();
+                }
+              },
+              icon: const Icon(Icons.settings),
+              tooltip: 'Show menu',
+            );
+          },
+          menuChildren: allGrades.map((e) => MenuItemButton(child: Row(
+            children: [
+              Checkbox(
+                tristate: true,
+                value:  grades.contains(e),
+                onChanged: (bool? value) {
+                  print(value);
+                  toggleGrade(value??false, e);
+                },
+
+              ),
+              Text(e.name),
+            ],
+          ),)).toList(),
+        ),
+      ]),
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              color: Theme.of(context).colorScheme.primary,
-              width: double.infinity,
-              height: 30,
-            ),
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: Container(
@@ -104,7 +162,7 @@ class _HomeState extends State<Home> {
                 child: Text(scalon["label"], style: TextStyle(fontSize: 32), textAlign: TextAlign.center,),
                 
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: grades[selectedScale].color,
                   border: Border.all(
                     color: Theme.of(context).colorScheme.primary,
                     width: 3
