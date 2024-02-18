@@ -46,6 +46,7 @@ class _HomeState extends State<Home> {
   };
 
   int selectedScale = 0;
+  Grade selectedGrade = YosGrade();
 
   late SharedPreferences prefs;
 
@@ -60,23 +61,31 @@ class _HomeState extends State<Home> {
     ];
 
     scalon = grades[selectedScale].scalons.first;
+    selectedGrade = grades[selectedScale];
     super.initState();
 
     Future.delayed(Duration.zero, () async {
       prefs = await SharedPreferences.getInstance();
       print(prefs.getStringList('grades'));
       final List<int> items = (prefs.getStringList('grades')??[]).map((e) => int.parse(e)).toList();
+      final int preselected = (prefs.getInt('preselected')??0);
 
       if(items.isEmpty){
         List<String> saveItems = ["0","1","2","3"];
+        selectedScale = 0;
+        selectedGrade = grades[0];
         await prefs.setStringList('grades', saveItems);
+        await prefs.setInt('preselected', preselected);
+
       }else{
         List<Grade> prelist = items.map((e) => allGrades[e]).toList();
         grades = prelist;
-        scalon = grades[selectedScale].scalons.first;
+        selectedGrade = allGrades[preselected];
+        selectedScale = grades.indexOf(selectedGrade);
       }
 
       scalon = grades[selectedScale].scalons.first;
+      selectedGrade = grades[selectedScale];
 
       Future.delayed(Durations.short1, () {
         centerScroll();
@@ -112,8 +121,11 @@ class _HomeState extends State<Home> {
     }
   }
 
-  selectGrade(Grade e) {
+  selectGrade(Grade e) async{
     int pos = grades.indexOf(e);
+    int preselected = allGrades.indexOf(e);
+    await prefs.setInt('preselected', preselected);
+
     setState(() {
       selectedScale = pos;
       scalon = grades[selectedScale].getScalonAtY(_controller.offset.floor()+offsetFirst);
@@ -131,6 +143,9 @@ class _HomeState extends State<Home> {
         grades.removeWhere((e) => e==grade);
         if(grades.length<=selectedScale){
           selectedScale--;
+
+          int preselected = allGrades.indexOf(grades[selectedScale]);
+          await prefs.setInt('preselected', preselected);
         }
         
         scalon = grades[selectedScale].getScalonAtY(_controller.offset.floor()+offsetFirst);
