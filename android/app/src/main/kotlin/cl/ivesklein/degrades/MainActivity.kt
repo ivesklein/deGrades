@@ -1,4 +1,4 @@
-package com.example.degrades
+package cl.ivesklein.degrades
 
 import io.flutter.embedding.android.FlutterActivity
 
